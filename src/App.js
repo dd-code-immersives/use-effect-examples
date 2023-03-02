@@ -2,15 +2,18 @@ import logo from './logo.svg';
 import './App.css';
 import { useState, useEffect } from 'react';
 
+import Reddit from './components/Reddit'
 
 function Top() {
   const [count, setCount] = useState(0);
 
-  //will run in response to the component Top() changing  
+  //will run in response to the component Top() changing 
+  // so every click below useEffect will run  
   // in class based react is equivalent to DidComponentMount 
   useEffect(() => {
     console.log("Top rendered");
   });
+
 
   return (
     <div>
@@ -46,29 +49,61 @@ function Bottom() {
 }
 
 
+function ThreeCounts() {
+  const [count1, setCount1] = useState(0);
+  const [count2, setCount2] = useState(0);
+  const [count3, setCount3] = useState(0);
 
+  // when we pass props to useEffect, useEffect runs when the props change.
+  // so this useEffect will only run when count2 changes.
+  useEffect(() => {
+    console.log("count2 changed!");
+  }, [count2]);
 
+  return (
+    <div>
+      {count1} {count2} {count3}
+      <br />
+      <button onClick={() => setCount1(count1 + 1)}>Increment count1</button>
+      <button onClick={() => setCount2(count2 + 1)}>Increment count2</button>
+      <button onClick={() => setCount3(count3 + 1)}>Increment count3</button>
+    </div>
+  );
+}
 
 
 
 function App() {
 
-  //run when component is mounted 
+  //runs when component is mounted 
+  // will only run once
   // aka after it is rendered
+
+  //set the default subredit to reactjs
+  const [inputValue, setValue] = useState("reactjs");
+  const [subreddit, setSubreddit] = useState(inputValue);
+ 
   useEffect(() => {
     console.log('mounted');
     return () => console.log('unmounting...');
-  }, [])  // <-- add this empty array here
+  }, [])  // <-- add this empty array here (which means it will only run once)
   
 
+  const handleSubmit = e => {
+    e.preventDefault();
+    setSubreddit(inputValue);
+  }
 
-  
   return (
-    <div className="App">
-      <Top/>
-      <Middle/>
-      <Bottom/>
-    </div>
+    <>
+    <form onSubmit={handleSubmit}>
+      <input
+        value={inputValue}
+        onChange={e => setValue(e.target.value)}
+      />
+    </form>
+    <Reddit subreddit={subreddit} />
+  </>
   );
 }
 
